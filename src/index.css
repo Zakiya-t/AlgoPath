@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    background-color: #05070B;
+    color: #F1F5F9;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom Glassmorphism */
+.glass-panel {
+  background: rgba(13, 17, 26, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(18, 24, 38, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 245, 160, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px -12px rgba(0, 245, 160, 0.12);
+}
+
+/* Neon Glow Accents */
+.neon-btn-primary {
+  background: linear-gradient(135deg, #00F5A0 0%, #059669 100%);
+  color: #05070B;
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(0, 245, 160, 0.35);
+  transition: all 0.25s ease;
+}
+
+.neon-btn-primary:hover {
+  box-shadow: 0 0 30px rgba(0, 245, 160, 0.65);
+  transform: translateY(-1px) scale(1.02);
+}
+
+.neon-btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #E2E8F0;
+  transition: all 0.2s ease;
+}
+
+.neon-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 245, 160, 0.5);
+  color: #FFFFFF;
+}
+
+/* Custom Glows */
+.glow-emerald {
+  filter: drop-shadow(0 0 12px rgba(0, 245, 160, 0.45));
+}
+
+.glow-cyan {
+  filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.45));
+}
+
