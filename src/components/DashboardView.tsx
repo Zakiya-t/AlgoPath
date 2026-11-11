@@ -58,7 +58,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
-              01 &bull; My Dashboard
+              My Dashboard
             </span>
             <span className="text-slate-300">&bull;</span>
             <span className="text-xs font-mono text-slate-500 font-semibold">Real-time Growth &amp; Progress</span>

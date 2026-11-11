@@ -30,7 +30,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const navItems: {
     id: NavigationTab;
-    num: string;
     label: string;
     icon: any;
     section: 'knowledge' | 'coding' | 'system';
@@ -39,14 +38,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
     // Knowledge Space
     {
       id: 'dashboard',
-      num: '01',
       label: 'My Dashboard',
       icon: LayoutDashboard,
       section: 'knowledge'
     },
     {
       id: 'learning-path',
-      num: '02',
       label: 'Learning Path',
       icon: BookOpen,
       section: 'knowledge',
@@ -54,7 +51,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: 'evaluation',
-      num: '03',
       label: 'Evaluation',
       icon: CheckSquare,
       section: 'knowledge',
@@ -62,7 +58,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: 'my-space',
-      num: '04',
       label: 'My Space',
       icon: Bookmark,
       section: 'knowledge',
@@ -70,7 +65,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: 'concept-maps',
-      num: '05',
       label: 'Concept Maps',
       icon: Network,
       section: 'knowledge',
@@ -80,7 +74,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     // Coding Lab
     {
       id: 'coding-lab',
-      num: '06',
       label: 'Coding Lab',
       icon: Terminal,
       section: 'coding',
@@ -90,7 +83,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     // System
     {
       id: 'revision-centre',
-      num: '07',
       label: 'Revision Centre',
       icon: RotateCcw,
       section: 'system',
@@ -98,7 +90,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: 'profile-settings',
-      num: '08',
       label: 'Profile & Settings',
       icon: Settings,
       section: 'system'
@@ -159,12 +150,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <span className={`text-[10px] font-mono font-bold ${isActive ? 'text-emerald-600' : 'text-slate-400'}`}>
-                    {item.num}
-                  </span>
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-700'}`} />
-                  <span>{item.label}</span>
+                <div className="flex items-center gap-3">
+                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-700'}`} />
+                  <span className="truncate">{item.label}</span>
                 </div>
                 {item.tag && (
                   <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-medium ${
@@ -197,12 +185,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <span className={`text-[10px] font-mono font-bold ${isActive ? 'text-cyan-600' : 'text-slate-400'}`}>
-                    {item.num}
-                  </span>
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-600' : 'text-slate-400 group-hover:text-slate-700'}`} />
-                  <span>{item.label}</span>
+                <div className="flex items-center gap-3">
+                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-cyan-600' : 'text-slate-400 group-hover:text-slate-700'}`} />
+                  <span className="truncate">{item.label}</span>
                 </div>
                 {item.tag && (
                   <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-medium ${
@@ -234,12 +219,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <span className={`text-[10px] font-mono font-bold ${isActive ? 'text-slate-700' : 'text-slate-400'}`}>
-                    {item.num}
-                  </span>
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-slate-800' : 'text-slate-400 group-hover:text-slate-700'}`} />
-                  <span>{item.label}</span>
+                <div className="flex items-center gap-3">
+                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-slate-800' : 'text-slate-400 group-hover:text-slate-700'}`} />
+                  <span className="truncate">{item.label}</span>
                 </div>
                 {item.tag && (
                   <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">

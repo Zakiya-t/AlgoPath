@@ -10,6 +10,9 @@ import { Sidebar } from './components/Sidebar';
 import { DashboardView } from './components/DashboardView';
 import { LearningPathView } from './components/LearningPathView';
 import { EvaluationView } from './components/EvaluationView';
+import { MySpaceView } from './components/MySpaceView';
+import { ConceptMapsView } from './components/ConceptMapsView';
+import { CodingLabView } from './components/CodingLabView';
 import { BlankPagePlaceholder } from './components/BlankPagePlaceholder';
 import {
   AuthMode,
@@ -146,9 +149,34 @@ export const App: React.FC = () => {
             />
           )}
 
+          {currentTab === 'my-space' && (
+            <MySpaceView
+              onNavigateToNote={handleNavigateToNote}
+              onStartEvaluation={handleStartEvaluation}
+            />
+          )}
+
+          {currentTab === 'concept-maps' && (
+            <ConceptMapsView
+              onNavigateToNote={handleNavigateToNote}
+              onStartEvaluation={handleStartEvaluation}
+              onNavigateTab={(tab) => setCurrentTab(tab)}
+            />
+          )}
+
+          {currentTab === 'coding-lab' && (
+            <CodingLabView
+              onNavigateToNote={handleNavigateToNote}
+              onNavigateTab={(tab) => setCurrentTab(tab)}
+            />
+          )}
+
           {currentTab !== 'dashboard' &&
             currentTab !== 'learning-path' &&
-            currentTab !== 'evaluation' && (
+            currentTab !== 'evaluation' &&
+            currentTab !== 'my-space' &&
+            currentTab !== 'concept-maps' &&
+            currentTab !== 'coding-lab' && (
               <BlankPagePlaceholder
                 tab={currentTab}
                 onGoToDashboard={() => setCurrentTab('dashboard')}

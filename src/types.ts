@@ -216,3 +216,66 @@ export interface StudentDashboardData {
   recommendation: LearningRecommendation;
   revisionItems: RevisionScheduleItem[];
 }
+
+export interface PersonalNote {
+  id: string;
+  title: string;
+  topicId: string;
+  topicName: string;
+  content: string;
+  codeSnippet?: string;
+  createdAt: string;
+  updatedAt: string;
+  tags: string[];
+}
+
+export interface MistakeVaultItem {
+  id: string;
+  topicId: string;
+  topicName: string;
+  question: string;
+  codeSnippet?: string;
+  studentAnswer: string;
+  correctAnswer: string;
+  misconceptionTag: string;
+  explanation: string;
+  recommendedNoteId: string;
+  recommendedNoteSection: string;
+  resolved: boolean;
+  timestamp: string;
+}
+
+export interface SavedQuestionItem {
+  id: string;
+  topicId: string;
+  topicName: string;
+  question: string;
+  codeSnippet?: string;
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
+  savedAt: string;
+}
+
+export type ConceptStatus = 'mastered' | 'in_progress' | 'weak' | 'locked';
+
+export interface ConceptNode {
+  id: string;
+  title: string;
+  category: 'foundations' | 'memory' | 'linear_ds' | 'algorithms' | 'hierarchical' | 'graphs';
+  categoryLabel: string;
+  tier: number;
+  status: ConceptStatus;
+  masteryPercentage: number;
+  description: string;
+  prerequisites: string[];
+  unlocks: string[];
+  learningNoteId?: string;
+  evaluationTopicId?: string;
+  codingProblemId?: string;
+  misconceptionAlert?: string;
+  x: number;
+  y: number;
+}
+
+

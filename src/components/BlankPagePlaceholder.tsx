@@ -156,7 +156,7 @@ export const BlankPagePlaceholder: React.FC<BlankPagePlaceholderProps> = ({
 
             <div>
               <span className="text-xs font-mono font-bold text-emerald-700 uppercase tracking-widest block">
-                Destination {meta.num} &bull; Next in Build Order
+                Module Exploration &bull; Upcoming Environment
               </span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-0.5">
                 {meta.title}
@@ -199,7 +199,7 @@ export const BlankPagePlaceholder: React.FC<BlankPagePlaceholderProps> = ({
         {/* Return to Dashboard Action */}
         <div className="flex items-center justify-between pt-4 border-t border-slate-100">
           <span className="text-xs text-slate-500 font-mono">
-            Focus right now: 01 &bull; My Dashboard
+            Active workspace &bull; My Dashboard
           </span>
 
           <button

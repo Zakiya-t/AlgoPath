@@ -92,7 +92,7 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                02 &bull; DSA Knowledge Space
+                DSA Knowledge Space
               </span>
               <span className="text-slate-300">&bull;</span>
               <span className="text-[11px] font-mono text-slate-600 font-bold">

@@ -265,7 +265,7 @@ export const EvaluationView: React.FC<EvaluationViewProps> = ({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
-              03 &bull; Evaluation
+              Evaluation &amp; Diagnostics
             </span>
             <span className="text-slate-300">&bull;</span>
             <span className="text-xs font-mono text-slate-500 font-semibold">
