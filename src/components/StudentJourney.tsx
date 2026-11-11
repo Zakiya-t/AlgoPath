@@ -111,21 +111,21 @@ export const StudentJourney: React.FC = () => {
   ];
 
   return (
-    <section id="journey" className="py-20 relative">
-      <div className="max-w-7xl mx-auto space-y-16">
+    <section id="journey" className="py-16 md:py-24 relative">
+      <div className="max-w-7xl mx-auto space-y-14">
 
-        {/* Section Header: The Student's Learning Journey */}
+        {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-            <Compass className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider shadow-xs">
+            <Compass className="w-3.5 h-3.5 text-emerald-600" />
             <span>The Student's Learning Journey</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-            How a Student Masters DSA on <span className="text-emerald-400">AlgoPath</span>
+          <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
+            How a Student Masters DSA on <span className="text-emerald-600">AlgoPath</span>
           </h2>
-          <p className="text-base text-slate-300">
-            The platform behaves like a personal teacher who understands the student, not a website that gives everyone the same content.
+          <p className="text-base text-slate-600">
+            The platform behaves like a personal teacher who understands the student, not a website that gives everyone the same static content.
           </p>
         </div>
 
@@ -141,29 +141,42 @@ export const StudentJourney: React.FC = () => {
                 <div
                   key={s.step}
                   onClick={() => setActiveStep(index)}
-                  className={`glass-card p-5 rounded-2xl border cursor-pointer transition-all duration-300 ${isActive
-                    ? 'border-emerald-400 bg-emerald-950/30 shadow-lg shadow-emerald-500/15 translate-x-1.5'
-                    : 'border-white/5 hover:border-white/20 opacity-75 hover:opacity-100'
-                    }`}
+                  className={`p-5 rounded-2xl border cursor-pointer transition-all duration-300 ${
+                    isActive
+                      ? 'border-emerald-500 bg-white shadow-lg shadow-emerald-500/10 translate-x-1.5 ring-1 ring-emerald-500'
+                      : 'border-slate-200/80 bg-white/70 hover:bg-white hover:border-slate-300 shadow-xs'
+                  }`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${isActive ? 'bg-emerald-400 text-obsidian-950 font-bold' : 'bg-white/5 text-slate-400'
-                      }`}>
+                    <div
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
+                        isActive
+                          ? 'bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/30'
+                          : 'bg-slate-100 text-slate-500'
+                      }`}
+                    >
                       <Icon className="w-5 h-5" />
                     </div>
 
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${isActive ? 'text-emerald-400' : 'text-slate-500'
-                          }`}>
+                        <span
+                          className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
+                            isActive ? 'text-emerald-700' : 'text-slate-500'
+                          }`}
+                        >
                           Phase 0{s.step}
                         </span>
                         <span className="text-[10px] text-slate-400 font-mono">&bull; {s.tagline}</span>
                       </div>
-                      <h3 className="text-base font-bold text-white">
+                      <h3
+                        className={`text-base font-bold ${
+                          isActive ? 'text-slate-900' : 'text-slate-700'
+                        }`}
+                      >
                         {s.title}
                       </h3>
-                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                         {s.description}
                       </p>
                     </div>
@@ -175,43 +188,43 @@ export const StudentJourney: React.FC = () => {
 
           {/* Right Column: Dynamic Deep-Dive Stage Card */}
           <div className="lg:col-span-7 sticky top-28">
-            <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/25 via-obsidian-900 to-cyan-950/20 shadow-2xl space-y-6 relative overflow-hidden">
+            <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-xl space-y-6 relative overflow-hidden">
 
               {/* Top Accent Ribbon */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-3">
-                  <span className="w-7 h-7 rounded-lg bg-emerald-400 text-obsidian-950 font-bold text-xs flex items-center justify-center font-mono">
+                  <span className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-bold text-xs flex items-center justify-center font-mono shadow-sm">
                     {journeySteps[activeStep].step}
                   </span>
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-700 font-bold">
                       {journeySteps[activeStep].preview.badge}
                     </span>
-                    <h3 className="text-xl font-extrabold text-white">
+                    <h3 className="text-xl font-extrabold text-slate-900">
                       {journeySteps[activeStep].title}
                     </h3>
                   </div>
                 </div>
 
-                <span className="text-xs font-mono text-cyan-300 bg-cyan-950/30 px-3 py-1 rounded-full border border-cyan-500/20">
+                <span className="text-xs font-mono text-cyan-800 bg-cyan-50 px-3 py-1 rounded-full border border-cyan-200 font-semibold">
                   {journeySteps[activeStep].tagline}
                 </span>
               </div>
 
               {/* Full Description */}
-              <p className="text-sm text-slate-200 leading-relaxed">
+              <p className="text-sm text-slate-700 leading-relaxed">
                 {journeySteps[activeStep].description}
               </p>
 
               {/* Detailed Breakdown List */}
-              <div className="space-y-3 bg-obsidian-950/60 p-5 rounded-2xl border border-white/5">
-                <span className="text-xs font-mono text-slate-400 uppercase tracking-wider font-semibold">
+              <div className="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200/80">
+                <span className="text-xs font-mono text-slate-700 uppercase tracking-wider font-bold">
                   How DoubtTrace Executes This:
                 </span>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {journeySteps[activeStep].preview.details.map((detail, idx) => (
-                    <div key={idx} className="flex items-start gap-3 text-xs text-slate-300">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                    <div key={idx} className="flex items-start gap-3 text-xs text-slate-700">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                       <span>{detail}</span>
                     </div>
                   ))}
@@ -219,15 +232,15 @@ export const StudentJourney: React.FC = () => {
               </div>
 
               {/* Real Simulation Note */}
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3">
-                <Sparkles className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                <span className="text-xs text-emerald-300 font-mono">
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3">
+                <Sparkles className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                <span className="text-xs text-emerald-800 font-mono font-medium">
                   {journeySteps[activeStep].preview.visualNote}
                 </span>
               </div>
 
               {/* Step indicator */}
-              <div className="pt-2 flex items-center justify-between text-xs text-slate-400 font-mono">
+              <div className="pt-2 flex items-center justify-between text-xs text-slate-500 font-mono">
                 <span>Phase 0{journeySteps[activeStep].step} of 05 &bull; {journeySteps[activeStep].tagline}</span>
               </div>
 
@@ -240,4 +253,3 @@ export const StudentJourney: React.FC = () => {
     </section>
   );
 };
-
