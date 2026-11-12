@@ -38,6 +38,7 @@ export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
   const [dashboardData, setDashboardData] = useState<StudentDashboardData | null>(null);
   const [evaluationTopic, setEvaluationTopic] = useState<string>('F01');
+  const [evaluationMode, setEvaluationMode] = useState<'practice' | 'test'>('practice');
   const [activeNoteId, setActiveNoteId] = useState<string>('F01');
 
   // Load saved profile on initial render
@@ -82,8 +83,9 @@ export const App: React.FC = () => {
     setCurrentTab('dashboard');
   };
 
-  const handleStartEvaluation = (topicId: string) => {
+  const handleStartEvaluation = (topicId: string, mode: 'practice' | 'test' = 'practice') => {
     setEvaluationTopic(topicId);
+    setEvaluationMode(mode);
     setCurrentTab('evaluation');
   };
 
@@ -144,7 +146,9 @@ export const App: React.FC = () => {
           {currentTab === 'evaluation' && (
             <EvaluationView
               initialTopicId={evaluationTopic}
+              initialMode={evaluationMode}
               onNavigateToNote={handleNavigateToNote}
+              onNavigateTab={(tab) => setCurrentTab(tab)}
               onRecordAssessment={handleRecordAssessment}
             />
           )}
@@ -161,6 +165,8 @@ export const App: React.FC = () => {
               onNavigateToNote={handleNavigateToNote}
               onStartEvaluation={handleStartEvaluation}
               onNavigateTab={(tab) => setCurrentTab(tab)}
+              recentAssessments={data.recentAssessments}
+              studentId={data.studentId}
             />
           )}
 

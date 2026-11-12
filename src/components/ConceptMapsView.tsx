@@ -18,13 +18,70 @@ import {
   CheckSquare,
   Compass
 } from 'lucide-react';
-import { ConceptNode, NavigationTab } from '../types';
+import {
+  AssessmentRecord,
+  ConceptNode,
+  ConceptProgress,
+  ConceptProgressStatus,
+  DSAConceptId,
+  NavigationTab
+} from '../types';
 
 interface ConceptMapsViewProps {
   onNavigateToNote: (noteId: string) => void;
-  onStartEvaluation: (topicId: string) => void;
+  onStartEvaluation: (topicId: string, mode?: 'practice' | 'test') => void;
   onNavigateTab: (tab: NavigationTab) => void;
+  recentAssessments: AssessmentRecord[];
+  studentId: string;
 }
+
+interface ArrayConceptDefinition {
+  id: DSAConceptId;
+  title: string;
+  description: string;
+  prerequisites: DSAConceptId[];
+}
+
+const ARRAY_LEARNING_PATH: ArrayConceptDefinition[] = [
+  {
+    id: 'ARR-01',
+    title: 'Array Fundamentals',
+    description: 'Understand indexed collections, contiguous memory, and constant-time access.',
+    prerequisites: []
+  },
+  {
+    id: 'ARR-02',
+    title: 'Array Traversal',
+    description: 'Visit array elements safely and reason about traversal complexity.',
+    prerequisites: ['ARR-01']
+  },
+  {
+    id: 'ARR-03',
+    title: 'Array Searching',
+    description: 'Find values in arrays and compare linear and ordered search strategies.',
+    prerequisites: ['ARR-02']
+  },
+  {
+    id: 'ARR-04',
+    title: 'Array Insertion',
+    description: 'Insert values at a chosen position while preserving array order and bounds.',
+    prerequisites: ['ARR-02']
+  },
+  {
+    id: 'ARR-05',
+    title: 'Array Deletion',
+    description: 'Remove values and shift remaining elements without crossing valid bounds.',
+    prerequisites: ['ARR-02']
+  }
+];
+
+const ARRAY_PATH_POSITIONS: Record<DSAConceptId, { x: number; y: number }> = {
+  'ARR-01': { x: 35, y: 62 },
+  'ARR-02': { x: 65, y: 205 },
+  'ARR-03': { x: 28, y: 360 },
+  'ARR-04': { x: 72, y: 505 },
+  'ARR-05': { x: 42, y: 650 }
+};
 
 const CONCEPT_NODES: ConceptNode[] = [
   // ==========================================
@@ -386,16 +443,83 @@ const CONCEPT_NODES: ConceptNode[] = [
 export const ConceptMapsView: React.FC<ConceptMapsViewProps> = ({
   onNavigateToNote,
   onStartEvaluation,
-  onNavigateTab
+  onNavigateTab,
+  recentAssessments,
+  studentId
 }) => {
-  const [activeViewMode, setActiveViewMode] = useState<'graph' | 'tree' | 'ecosystem'>('graph');
+  const [activeViewMode, setActiveViewMode] = useState<
+    'array-path' | 'graph' | 'tree' | 'ecosystem'
+  >('array-path');
   const [selectedNodeId, setSelectedNodeId] = useState<string>('F06');
+  const [selectedArrayConceptId, setSelectedArrayConceptId] = useState<DSAConceptId>('ARR-01');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [zoomLevel, setZoomLevel] = useState<number>(1);
 
   const selectedNode = CONCEPT_NODES.find((n) => n.id === selectedNodeId) || CONCEPT_NODES[0];
+  const arrayProgressById = new Map<DSAConceptId, ConceptProgress>();
+  const arrayProgress = ARRAY_LEARNING_PATH.map((concept): ConceptProgress => {
+    const latestFinalAssessment = recentAssessments.find(
+      (record) =>
+        record.mode === 'test' &&
+        (record.topicId === concept.id || record.topic === concept.id)
+    );
+    const latestFinalScore = latestFinalAssessment
+      ? latestFinalAssessment.scorePercentage ?? latestFinalAssessment.score
+      : null;
+    const prerequisitesMastered = concept.prerequisites.every(
+      (prerequisiteId) => arrayProgressById.get(prerequisiteId)?.status === 'mastered'
+    );
+    let status: ConceptProgressStatus;
+
+    if (!prerequisitesMastered) {
+      status = 'locked';
+    } else if (latestFinalScore === null) {
+      status = 'current';
+    } else if (latestFinalScore >= 70) {
+      status = 'mastered';
+    } else {
+      status = 'needs_improvement';
+    }
+
+    const progress: ConceptProgress = {
+      studentId,
+      conceptId: concept.id,
+      status,
+      masteryPercentage: latestFinalScore ?? 0,
+      latestFinalScore,
+      prerequisites: concept.prerequisites,
+      unlockedConcepts: ARRAY_LEARNING_PATH.filter(
+        (candidate) =>
+          candidate.prerequisites.includes(concept.id) &&
+          candidate.prerequisites.every((prerequisiteId) =>
+            prerequisiteId === concept.id
+              ? status === 'mastered'
+              : arrayProgressById.get(prerequisiteId)?.status === 'mastered'
+          )
+      ).map((candidate) => candidate.id)
+    };
+    arrayProgressById.set(concept.id, progress);
+    return progress;
+  });
+  const selectedArrayConcept = ARRAY_LEARNING_PATH.find(
+    (concept) => concept.id === selectedArrayConceptId
+  ) ?? ARRAY_LEARNING_PATH[0];
+  const selectedArrayProgress =
+    arrayProgress.find((progress) => progress.conceptId === selectedArrayConceptId) ??
+    arrayProgress[0];
+  const selectedArrayAssessments = recentAssessments.filter(
+    (record) =>
+      record.topicId === selectedArrayConceptId || record.topic === selectedArrayConceptId
+  );
+  const selectedArrayLatestFinal = selectedArrayAssessments.find(
+    (record) => record.mode === 'test'
+  );
+  const selectedArrayMissingPrerequisites = selectedArrayConcept.prerequisites.filter(
+    (prerequisiteId) =>
+      arrayProgressById.get(prerequisiteId)?.status !== 'mastered'
+  );
 
   // Filtering
   const filteredNodes = CONCEPT_NODES.filter((node) => {
@@ -441,7 +565,9 @@ export const ConceptMapsView: React.FC<ConceptMapsViewProps> = ({
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-            Curriculum Dependency Tree &amp; Prerequisite Graph
+            {activeViewMode === 'array-path'
+              ? 'Array Learning Journey'
+              : 'Curriculum Dependency Tree & Prerequisite Graph'}
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-2xl">
             Understand how DSA concepts connect together. Discover missing prerequisites when you struggle, see what each concept unlocks, and teleport directly across all platform environments.
@@ -449,7 +575,19 @@ export const ConceptMapsView: React.FC<ConceptMapsViewProps> = ({
         </div>
 
         {/* View Mode Toggle Buttons */}
-        <div className="flex items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-xs flex-shrink-0 self-start md:self-auto">
+        <div className="flex flex-wrap items-center bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-xs flex-shrink-0 self-start md:self-auto">
+          <button
+            onClick={() => setActiveViewMode('array-path')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
+              activeViewMode === 'array-path'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-700 hover:text-slate-900'
+            }`}
+          >
+            <CheckSquare className="w-4 h-4" />
+            <span>Array Journey</span>
+          </button>
+
           <button
             onClick={() => setActiveViewMode('graph')}
             className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
@@ -566,6 +704,309 @@ export const ConceptMapsView: React.FC<ConceptMapsViewProps> = ({
         </div>
 
       </div>
+
+      {activeViewMode === 'array-path' && (
+        <section className="grid grid-cols-1 xl:grid-cols-5 gap-6 items-start">
+          <div className="xl:col-span-3 bg-white rounded-3xl border-2 border-slate-200/90 shadow-md p-5 sm:p-7">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5">
+              <div>
+                <p className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">
+                  Array levels · 5 concepts
+                </p>
+                <h2 className="text-lg sm:text-xl font-black text-slate-950">
+                  Follow the prerequisite trail
+                </h2>
+              </div>
+              <p className="text-xs text-slate-500 font-medium">
+                Master each unlocked level to open the next path.
+              </p>
+            </div>
+
+            <div className="relative h-[700px] max-w-2xl mx-auto">
+              <svg
+                viewBox="0 0 100 700"
+                preserveAspectRatio="none"
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                aria-hidden="true"
+              >
+                {ARRAY_LEARNING_PATH.flatMap((concept) =>
+                  concept.prerequisites.map((prerequisiteId) => {
+                    const start = ARRAY_PATH_POSITIONS[prerequisiteId];
+                    const end = ARRAY_PATH_POSITIONS[concept.id];
+                    const prerequisiteProgress = arrayProgressById.get(prerequisiteId);
+                    const isMastered = prerequisiteProgress?.status === 'mastered';
+
+                    return (
+                      <path
+                        key={`${prerequisiteId}-${concept.id}`}
+                        d={`M ${start.x} ${start.y} C ${start.x} ${start.y + (end.y - start.y) * 0.45}, ${end.x} ${start.y + (end.y - start.y) * 0.55}, ${end.x} ${end.y}`}
+                        fill="none"
+                        stroke={isMastered ? '#10B981' : '#CBD5E1'}
+                        strokeWidth="1.25"
+                        strokeDasharray={isMastered ? undefined : '3 3'}
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    );
+                  })
+                )}
+              </svg>
+
+              {ARRAY_LEARNING_PATH.map((concept, index) => {
+                const progress = arrayProgressById.get(concept.id);
+                const status = progress?.status ?? 'locked';
+                const position = ARRAY_PATH_POSITIONS[concept.id];
+                const selected = selectedArrayConceptId === concept.id;
+                const levelStyle =
+                  status === 'mastered'
+                    ? 'bg-emerald-500 border-emerald-200 text-white shadow-emerald-200'
+                    : status === 'current'
+                    ? 'bg-cyan-500 border-cyan-200 text-white shadow-cyan-200'
+                    : status === 'needs_improvement'
+                    ? 'bg-orange-500 border-orange-200 text-white shadow-orange-200'
+                    : 'bg-slate-300 border-slate-100 text-slate-600 shadow-slate-200';
+
+                return (
+                  <button
+                    key={concept.id}
+                    type="button"
+                    onClick={() => setSelectedArrayConceptId(concept.id)}
+                    aria-label={`${concept.id}, level ${index + 1}, ${concept.title}, ${status.replace('_', ' ')}`}
+                    aria-pressed={selected}
+                    className="absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300 rounded-2xl"
+                    style={{ left: `${position.x}%`, top: `${(position.y / 700) * 100}%` }}
+                  >
+                    <span className="text-[10px] sm:text-xs font-mono font-black tracking-wider text-slate-500">
+                      LEVEL {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <span
+                      className={`flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full border-[5px] shadow-lg transition-transform ${
+                        levelStyle
+                      } ${selected ? 'scale-110 ring-4 ring-emerald-200 ring-offset-2' : 'hover:scale-105'} ${
+                        status === 'current' ? 'animate-pulse' : ''
+                      }`}
+                    >
+                      {status === 'mastered' ? (
+                        <CheckCircle2 className="h-8 w-8" />
+                      ) : status === 'locked' ? (
+                        <Lock className="h-7 w-7" />
+                      ) : (
+                        <span className="text-2xl font-black">{index + 1}</span>
+                      )}
+                    </span>
+                    <span className="max-w-[9rem] text-xs sm:text-sm font-black leading-tight text-slate-800">
+                      {concept.title}
+                    </span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wide ${
+                        status === 'mastered'
+                          ? 'bg-emerald-50 text-emerald-800'
+                          : status === 'current'
+                          ? 'bg-cyan-50 text-cyan-800'
+                          : status === 'needs_improvement'
+                          ? 'bg-orange-50 text-orange-800'
+                          : 'bg-slate-100 text-slate-500'
+                      }`}
+                    >
+                      {status.replace('_', ' ')}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <aside className="xl:col-span-2 bg-white rounded-3xl border-2 border-slate-200/90 shadow-md p-5 sm:p-6 space-y-5">
+            <div className="border-b border-slate-100 pb-4 space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-xs font-mono font-bold text-slate-500">
+                  {selectedArrayConcept.id} · Level {ARRAY_LEARNING_PATH.indexOf(selectedArrayConcept) + 1}
+                </span>
+                <span
+                  className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${
+                    selectedArrayProgress.status === 'mastered'
+                      ? 'bg-emerald-50 text-emerald-800'
+                      : selectedArrayProgress.status === 'current'
+                      ? 'bg-cyan-50 text-cyan-800'
+                      : selectedArrayProgress.status === 'needs_improvement'
+                      ? 'bg-orange-50 text-orange-800'
+                      : 'bg-slate-100 text-slate-600'
+                  }`}
+                >
+                  {selectedArrayProgress.status.replace('_', ' ')}
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-slate-950">{selectedArrayConcept.title}</h2>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                {selectedArrayConcept.description}
+              </p>
+            </div>
+
+            {selectedArrayProgress.status === 'locked' ? (
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-2">
+                <div className="flex items-center gap-2 text-slate-700 font-black text-sm">
+                  <Lock className="h-4 w-4" />
+                  <span>Level locked</span>
+                </div>
+                <p className="text-xs text-slate-600">
+                  Master these prerequisite{selectedArrayMissingPrerequisites.length === 1 ? '' : 's'} with a final assessment score of at least 70%:
+                </p>
+                <ul className="space-y-1">
+                  {selectedArrayMissingPrerequisites.map((prerequisiteId) => {
+                    const prerequisite = ARRAY_LEARNING_PATH.find(
+                      (concept) => concept.id === prerequisiteId
+                    );
+                    return (
+                      <li key={prerequisiteId} className="text-xs font-bold text-slate-700">
+                        {prerequisiteId} · {prerequisite?.title}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ) : selectedArrayProgress.status === 'needs_improvement' ? (
+              <div className="rounded-2xl border border-orange-200 bg-orange-50 p-4 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-2 text-sm font-black text-orange-900">
+                    <AlertTriangle className="h-4 w-4" />
+                    Needs improvement
+                  </span>
+                  <span className="text-sm font-black text-orange-900">
+                    {selectedArrayProgress.latestFinalScore}%
+                  </span>
+                </div>
+                <p className="text-xs text-orange-900">
+                  Review these weak areas before retaking the final assessment:
+                </p>
+                {selectedArrayLatestFinal?.misconceptionsDetected?.length ? (
+                  <ul className="list-disc space-y-1 pl-5 text-xs font-medium text-orange-950">
+                    {selectedArrayLatestFinal.misconceptionsDetected.map((weakArea) => (
+                      <li key={weakArea}>{weakArea}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-xs font-medium text-orange-950">
+                    Revisit the lesson and practice the core {selectedArrayConcept.title.toLowerCase()} skills.
+                  </p>
+                )}
+                <p className="text-xs text-orange-900">
+                  Recommendation: revise the Array module, then retry this level.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onNavigateToNote('D01-A01')}
+                  className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-black text-orange-900 border border-orange-200 hover:bg-orange-100"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  Open revision material
+                </button>
+              </div>
+            ) : selectedArrayProgress.status === 'mastered' ? (
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-black text-emerald-900">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>Mastered · {selectedArrayProgress.latestFinalScore}% final score</span>
+                </div>
+                <p className="text-xs text-emerald-900">
+                  Revision material and your assessment history are available below.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onNavigateToNote('D01-A01')}
+                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white hover:bg-emerald-700"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  Review Array lesson
+                </button>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-cyan-200 bg-cyan-50 p-4 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-black text-cyan-900">
+                  <BookOpen className="h-4 w-4" />
+                  <span>Ready to learn</span>
+                </div>
+                <p className="text-xs text-cyan-900">
+                  Complete the lesson and activities, then take the final assessment to unlock the next level.
+                </p>
+              </div>
+            )}
+
+            {selectedArrayProgress.status !== 'locked' && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {selectedArrayProgress.status === 'current' && (
+                  <button
+                    type="button"
+                    onClick={() => onNavigateToNote('D01-A01')}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-black text-white hover:bg-emerald-700"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    Learning module
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onNavigateTab('coding-lab')}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-black text-slate-800 hover:bg-slate-50"
+                  title="Open the existing Array visualizer and tutor clarification in Coding Lab"
+                >
+                  <Terminal className="h-4 w-4" />
+                  Visualizer &amp; tutor
+                </button>
+                {selectedArrayProgress.status !== 'mastered' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => onStartEvaluation(selectedArrayConcept.id, 'practice')}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-200 bg-cyan-50 px-3 py-2.5 text-xs font-black text-cyan-900 hover:bg-cyan-100"
+                    >
+                      Practice assessment
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onStartEvaluation(selectedArrayConcept.id, 'test')}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-3 py-2.5 text-xs font-black text-white hover:bg-slate-800"
+                    >
+                      Final assessment
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+
+            {selectedArrayAssessments.length > 0 && (
+              <div className="space-y-2 border-t border-slate-100 pt-4">
+                <h3 className="text-xs font-black uppercase tracking-wide text-slate-700">
+                  Previous assessment results
+                </h3>
+                <ul className="max-h-48 space-y-2 overflow-y-auto">
+                  {selectedArrayAssessments.map((record) => (
+                    <li
+                      key={record.id}
+                      className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2 text-xs"
+                    >
+                      <span className="min-w-0">
+                        <span className="block font-bold text-slate-800">
+                          {record.mode === 'test' ? 'Final assessment' : 'Practice assessment'}
+                        </span>
+                        <span className="block text-slate-500">{record.date}</span>
+                      </span>
+                      <span
+                        className={`shrink-0 font-black ${
+                          record.mode === 'test' &&
+                          (record.scorePercentage ?? record.score) >= 70
+                            ? 'text-emerald-700'
+                            : 'text-slate-700'
+                        }`}
+                      >
+                        {record.scorePercentage ?? record.score}%
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </aside>
+        </section>
+      )}
 
       {/* =====================================================================
           VIEW MODE 1: INTERACTIVE SVG KNOWLEDGE GRAPH
