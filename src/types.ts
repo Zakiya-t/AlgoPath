@@ -279,3 +279,179 @@ export interface ConceptNode {
 }
 
 
+
+// ==========================================
+// DOUBTTRACE: EVALUATION AND PROGRESSION TYPES
+// ==========================================
+
+// Shared concept identifiers
+export type DSAConceptId =
+  | 'ARR-01'
+  | 'ARR-02'
+  | 'ARR-03'
+  | 'ARR-04'
+  | 'ARR-05';
+
+// Assessment modes
+export type EvaluationMode = 'practice' | 'final';
+
+// Concept progression states
+export type ConceptProgressStatus =
+  | 'locked'
+  | 'current'
+  | 'needs_improvement'
+  | 'mastered';
+
+// Individual evaluation criteria
+export interface EvaluationCriterion {
+  id: string;
+  conceptId: DSAConceptId;
+  name: string;
+  description: string;
+  weight: number;
+  visualizationId: string;
+}
+
+// Criterion-wise assessment result
+export interface CriterionResult {
+  criterionId: string;
+  criterionName: string;
+  score: number;
+  maximumScore: number;
+  percentage: number;
+  feedback: string;
+}
+
+// Student assessment attempt
+export interface EvaluationAttempt {
+  id: string;
+  studentId: string;
+  conceptId: DSAConceptId;
+  mode: EvaluationMode;
+  attemptNumber: number;
+  criterionResults: CriterionResult[];
+  finalScore: number;
+  completedAt: string;
+}
+
+// Weakness identification
+export interface WeaknessAnalysis {
+  criterionId: string;
+  criterionName: string;
+  scorePercentage: number;
+  weaknessDescription: string;
+  recommendedVisualizationId: string;
+  priority: number;
+}
+
+// Concept progression information
+export interface ConceptProgress {
+  studentId: string;
+  conceptId: DSAConceptId;
+  status: ConceptProgressStatus;
+  masteryPercentage: number;
+  latestFinalScore: number | null;
+  prerequisites: DSAConceptId[];
+  unlockedConcepts: DSAConceptId[];
+}
+
+// Targeted practice information
+export interface TargetedPractice {
+  id: string;
+  studentId: string;
+  conceptId: DSAConceptId;
+  criterionId: string;
+  questionCount: number;
+  score: number;
+  completedAt: string;
+}
+
+// Complete final assessment result
+export interface FinalEvaluationResult {
+  attempt: EvaluationAttempt;
+  overallScore: number;
+  criterionResults: CriterionResult[];
+  weaknesses: WeaknessAnalysis[];
+  recommendations: string[];
+  mastered: boolean;
+  unlockedConcepts: DSAConceptId[];
+}
+
+
+
+
+
+// Individual evaluation criteria
+export interface EvaluationCriterion {
+  id: string;
+  conceptId: DSAConceptId;
+  name: string;
+  description: string;
+  weight: number;
+  visualizationId: string;
+}
+
+// Criterion-wise assessment result
+export interface CriterionResult {
+  criterionId: string;
+  criterionName: string;
+  score: number;
+  maximumScore: number;
+  percentage: number;
+  feedback: string;
+}
+
+// Student assessment attempt
+export interface EvaluationAttempt {
+  id: string;
+  studentId: string;
+  conceptId: DSAConceptId;
+  mode: EvaluationMode;
+  attemptNumber: number;
+  criterionResults: CriterionResult[];
+  finalScore: number;
+  completedAt: string;
+}
+
+// Weakness identification
+export interface WeaknessAnalysis {
+  criterionId: string;
+  criterionName: string;
+  scorePercentage: number;
+  weaknessDescription: string;
+  recommendedVisualizationId: string;
+  priority: number;
+}
+
+// Concept progression information
+export interface ConceptProgress {
+  studentId: string;
+  conceptId: DSAConceptId;
+  status: ConceptProgressStatus;
+  masteryPercentage: number;
+  latestFinalScore: number | null;
+  prerequisites: DSAConceptId[];
+  unlockedConcepts: DSAConceptId[];
+}
+
+// Targeted practice information
+export interface TargetedPractice {
+  id: string;
+  studentId: string;
+  conceptId: DSAConceptId;
+  criterionId: string;
+  questionCount: number;
+  score: number;
+  completedAt: string;
+}
+
+// Complete final assessment result
+export interface FinalEvaluationResult {
+  attempt: EvaluationAttempt;
+  overallScore: number;
+  criterionResults: CriterionResult[];
+  weaknesses: WeaknessAnalysis[];
+  recommendations: string[];
+  mastered: boolean;
+  unlockedConcepts: DSAConceptId[];
+}
