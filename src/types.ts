@@ -54,14 +54,33 @@ export interface AssessmentRecord {
   completedAt?: string;
 }
 
+export interface SkillRadarData {
+  arrays: number;
+  linkedLists: number;
+  stacks: number;
+  queues: number;
+  foundations: number;
+}
+
+export interface ActivityHistoryItem {
+  date: string; // 'YYYY-MM-DD'
+  count: number;
+  hours?: number;
+}
+
 export interface CodingStatBreakdown {
   totalSolved: number;
   totalAvailable: number;
   easyCount: number;
   mediumCount: number;
   hardCount: number;
-  acceptanceRate: number; // percentage
-  compilationPassRate: number; // percentage
+  acceptanceRate: number | null; // percentage, null if no submissions yet
+  compilationPassRate: number | null;
+  codeQualityScore: number | null; // null if not yet evaluated; optimal time complexity (e.g. O(N) vs O(N^2)) & memory
+  optimalComplexityRate: number | null; // percentage of solutions with optimal Big-O
+  timeComplexityGrade?: string | null; // e.g. 'O(N) Linear' or null
+  spaceComplexityGrade?: string | null; // e.g. 'O(1) In-Place' or null
+  runtimeMs?: number | null; // e.g. 0.42 ms or null
 }
 
 export interface ActivityDay {
@@ -201,18 +220,31 @@ export interface StudentDashboardData {
   email: string;
   levelBadge: string;
   streakDays: number;
+  bestStreak: number;
+  activeDays: number;
+
+  // Gamified Metrics
+  dsaEloRating: number;         // Starts at 800
+  level: number;                // Starts at 1
+  xp: number;                   // Starts at 0
+  xpToNextLevel: number;        // e.g. 100
+  coins: number;                // AlgoTokens earned
   
   // SEPARATE DIMENSIONS (Core Architecture Rule: Do not mix Theory and Coding)
   overallMasteryScore: number;     // 0 - 100 (Weighted composite)
   theoryMasteryScore: number;      // 0 - 100 (Knowledge Space only)
   codingProficiencyScore: number;   // 0 - 100 (Coding Lab only)
   
+  // Skill Radar (Spider Web Chart mapping proficiency in linear DSA)
+  radarSkills: SkillRadarData;
+
   moduleMetrics: ModuleMetric[];
   strongConcepts: ConceptDiagnostic[];
   weakConcepts: ConceptDiagnostic[];
   recentAssessments: AssessmentRecord[];
   codingStats: CodingStatBreakdown;
   weeklyActivity: ActivityDay[];
+  activityHistory: ActivityHistoryItem[]; // Real date-based activity heatmap
   recommendation: LearningRecommendation;
   revisionItems: RevisionScheduleItem[];
 }

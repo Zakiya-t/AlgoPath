@@ -20,11 +20,15 @@ interface LearningPathViewProps {
   initialNoteId?: string;
   onStartEvaluation: (topicId: string) => void;
   onNavigateTab?: (tab: any) => void;
+  onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
 export const LearningPathView: React.FC<LearningPathViewProps> = ({
   initialNoteId = 'F01',
   onStartEvaluation,
+  onToggleSidebar,
+  isSidebarOpen
 }) => {
   // Navigation Mode: 'catalog' (all modules overview) or 'reader' (inside a single full note)
   const [viewMode, setViewMode] = useState<'catalog' | 'reader'>('catalog');
@@ -75,6 +79,34 @@ export const LearningPathView: React.FC<LearningPathViewProps> = ({
           ===================================================================== */}
       <header className="sticky top-0 z-30 px-6 sm:px-10 py-4 border-b border-slate-200/90 bg-white/95 backdrop-blur-md flex flex-wrap items-center justify-between gap-4 shadow-xs">
         <div className="flex items-center gap-3">
+          {/* THE 3 BARS (☰) BUTTON */}
+          {onToggleSidebar && (
+            <button
+              onClick={onToggleSidebar}
+              className={`p-2.5 rounded-xl border-2 shadow-sm flex items-center justify-center transition-all group cursor-pointer flex-shrink-0 ${
+                isSidebarOpen
+                  ? 'bg-emerald-50 border-emerald-400 text-emerald-950 ring-2 ring-emerald-400/20'
+                  : 'bg-white hover:bg-slate-50 border-slate-300 hover:border-emerald-500 text-slate-900'
+              }`}
+              title="Menu (3 bars)"
+              aria-label="Toggle navigation menu"
+            >
+              <svg
+                className={`w-5 h-5 transition-colors ${isSidebarOpen ? 'text-emerald-600' : 'text-slate-900 group-hover:text-emerald-600'}`}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+          )}
+
           {viewMode === 'reader' ? (
             <button
               onClick={() => setViewMode('catalog')}

@@ -15,11 +15,15 @@ import {
 interface BlankPagePlaceholderProps {
   tab: NavigationTab;
   onGoToDashboard: () => void;
+  onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
 export const BlankPagePlaceholder: React.FC<BlankPagePlaceholderProps> = ({
   tab,
-  onGoToDashboard
+  onGoToDashboard,
+  onToggleSidebar,
+  isSidebarOpen
 }) => {
   const getTabMeta = () => {
     switch (tab) {
@@ -146,6 +150,33 @@ export const BlankPagePlaceholder: React.FC<BlankPagePlaceholderProps> = ({
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-100 pb-6">
           <div className="flex items-center gap-4">
+            {onToggleSidebar && (
+              <button
+                onClick={onToggleSidebar}
+                className={`p-2.5 sm:p-3 rounded-2xl border-2 shadow-sm flex items-center justify-center transition-all group cursor-pointer flex-shrink-0 ${
+                  isSidebarOpen
+                    ? 'bg-emerald-50 border-emerald-400 text-emerald-950 ring-2 ring-emerald-400/20'
+                    : 'bg-white hover:bg-slate-50 border-slate-300 hover:border-emerald-500 text-slate-900'
+                }`}
+                title="Menu (3 bars)"
+                aria-label="Toggle navigation menu"
+              >
+                <svg
+                  className={`w-5 h-5 transition-colors ${isSidebarOpen ? 'text-emerald-600' : 'text-slate-900 group-hover:text-emerald-600'}`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              </button>
+            )}
+
             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-xs ${
               meta.accent === 'cyan'
                 ? 'bg-cyan-50 text-cyan-700 border border-cyan-200'

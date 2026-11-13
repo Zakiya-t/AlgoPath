@@ -9,50 +9,19 @@ export const createDefaultProfile = (email: string, name: string, id?: string): 
     email,
     name: name || email.split('@')[0],
     levelBadge: 'Tier 1: Foundations',
-    streakDays: 4,
-    accuracyRate: 91,
+    streakDays: 1,
+    accuracyRate: 0,
     nextRecommendedStep: {
-      module: 'Module 02: Arrays',
-      topic: 'Dynamic Arrays & Vector Resizing',
-      estimatedMinutes: 20
+      module: 'Module 01: Foundations',
+      topic: 'Variables & Memory Addressing',
+      estimatedMinutes: 15
     },
-    masteredConcepts: [
-      'Pointer Dereferencing (*ptr)',
-      'Stack Frames & Local Variables',
-      'Constant Time O(1) Operations',
-      'Primitive Sizing sizeof(int)'
-    ],
-    activeMisconceptions: [
-      {
-        id: 'misc_1',
-        concept: 'Off-by-one Loop Bounds',
-        detail: 'Attempting to access arr[size] instead of arr[size-1] in terminating condition.',
-        severity: 'medium'
-      },
-      {
-        id: 'misc_2',
-        concept: 'Dangling Pointers',
-        detail: 'Dereferencing raw heap pointer after delete without resetting to nullptr.',
-        severity: 'high'
-      }
-    ],
-    retentionSchedule: [
-      {
-        id: 'ret_1',
-        concept: 'Pointer Arithmetic & Address Math',
-        dueInDays: 4,
-        status: 'scheduled'
-      },
-      {
-        id: 'ret_2',
-        concept: 'Contiguous L1/L2 Cache Line Hits',
-        dueInDays: 7,
-        status: 'scheduled'
-      }
-    ],
+    masteredConcepts: [],
+    activeMisconceptions: [],
+    retentionSchedule: [],
     moduleProgress: {
-      basics: 100,
-      array: 35,
+      basics: 0,
+      array: 0,
       'linked-list': 0,
       stack: 0,
       queue: 0

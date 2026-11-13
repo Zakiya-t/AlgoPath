@@ -22,6 +22,8 @@ import { PersonalNote, MistakeVaultItem, SavedQuestionItem } from '../types';
 interface MySpaceViewProps {
   onNavigateToNote: (noteId: string) => void;
   onStartEvaluation: (topicId: string) => void;
+  onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
 const STORAGE_KEY_NOTES = 'algopath_personal_notes';
@@ -202,7 +204,9 @@ v.push_back(42);`,
 
 export const MySpaceView: React.FC<MySpaceViewProps> = ({
   onNavigateToNote,
-  onStartEvaluation
+  onStartEvaluation,
+  onToggleSidebar,
+  isSidebarOpen
 }) => {
   const [activeTab, setActiveTab] = useState<'notes' | 'mistakes' | 'saved' | 'bookmarks'>('notes');
   const [notes, setNotes] = useState<PersonalNote[]>([]);
@@ -367,22 +371,52 @@ export const MySpaceView: React.FC<MySpaceViewProps> = ({
       
       {/* 1. Header & Desk Overview */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200/90">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
-              My Space
-            </span>
-            <span className="text-slate-300">&bull;</span>
-            <span className="text-xs font-mono text-slate-600 font-bold">
-              Student Desk &amp; Knowledge Vault
-            </span>
+        <div className="flex items-start sm:items-center gap-3.5">
+          {/* THE 3 BARS (☰) BUTTON */}
+          {onToggleSidebar && (
+            <button
+              onClick={onToggleSidebar}
+              className={`p-2.5 sm:p-3 rounded-2xl border-2 shadow-sm flex items-center justify-center transition-all group cursor-pointer flex-shrink-0 mt-1 sm:mt-0 ${
+                isSidebarOpen
+                  ? 'bg-emerald-50 border-emerald-400 text-emerald-950 ring-2 ring-emerald-400/20'
+                  : 'bg-white hover:bg-slate-50 border-slate-300 hover:border-emerald-500 text-slate-900'
+              }`}
+              title="Menu (3 bars)"
+              aria-label="Toggle navigation menu"
+            >
+              <svg
+                className={`w-5 h-5 transition-colors ${isSidebarOpen ? 'text-emerald-600' : 'text-slate-900 group-hover:text-emerald-600'}`}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+          )}
+
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
+                My Space
+              </span>
+              <span className="text-slate-300">&bull;</span>
+              <span className="text-xs font-mono text-slate-600 font-bold">
+                Student Desk &amp; Knowledge Vault
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
+              Personal Notes &amp; Mistake Vault
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-2xl">
+              Your private repository of handwritten revision notes, diagnosed algorithmic misconceptions, bookmarked tricky quiz questions, and verified C++ reference links.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
-            Personal Notes &amp; Mistake Vault
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 font-medium max-w-2xl">
-            Your private repository of handwritten revision notes, diagnosed algorithmic misconceptions, bookmarked tricky quiz questions, and verified C++ reference links.
-          </p>
         </div>
 
         <button

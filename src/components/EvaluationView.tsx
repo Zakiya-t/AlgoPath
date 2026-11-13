@@ -17,6 +17,8 @@ interface EvaluationViewProps {
   initialTopicId?: string;
   onNavigateToNote: (noteId: string) => void;
   onRecordAssessment?: (record: AssessmentRecord) => void;
+  onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
 interface EvaluationQuestion {
@@ -131,7 +133,9 @@ std::cout << counter;`,
 export const EvaluationView: React.FC<EvaluationViewProps> = ({
   initialTopicId = 'F01',
   onNavigateToNote,
-  onRecordAssessment
+  onRecordAssessment,
+  onToggleSidebar,
+  isSidebarOpen
 }) => {
   const [selectedTopicId, setSelectedTopicId] = useState<string>(initialTopicId);
   const [activeMode, setActiveMode] = useState<'practice' | 'test'>('practice');
@@ -262,22 +266,52 @@ export const EvaluationView: React.FC<EvaluationViewProps> = ({
       
       {/* 1. Header & Mode Switcher */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200/90">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
-              Evaluation &amp; Diagnostics
-            </span>
-            <span className="text-slate-300">&bull;</span>
-            <span className="text-xs font-mono text-slate-500 font-semibold">
-              {activeMode === 'practice' ? 'Practice Mode (Learning with Hints)' : 'Test Mode (Timed Diagnostic Assessment)'}
-            </span>
+        <div className="flex items-start sm:items-center gap-3.5">
+          {/* THE 3 BARS (☰) BUTTON */}
+          {onToggleSidebar && (
+            <button
+              onClick={onToggleSidebar}
+              className={`p-2.5 sm:p-3 rounded-2xl border-2 shadow-sm flex items-center justify-center transition-all group cursor-pointer flex-shrink-0 mt-1 sm:mt-0 ${
+                isSidebarOpen
+                  ? 'bg-emerald-50 border-emerald-400 text-emerald-950 ring-2 ring-emerald-400/20'
+                  : 'bg-white hover:bg-slate-50 border-slate-300 hover:border-emerald-500 text-slate-900'
+              }`}
+              title="Menu (3 bars)"
+              aria-label="Toggle navigation menu"
+            >
+              <svg
+                className={`w-5 h-5 transition-colors ${isSidebarOpen ? 'text-emerald-600' : 'text-slate-900 group-hover:text-emerald-600'}`}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+          )}
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
+                Evaluation &amp; Diagnostics
+              </span>
+              <span className="text-slate-300">&bull;</span>
+              <span className="text-xs font-mono text-slate-500 font-semibold">
+                {activeMode === 'practice' ? 'Practice Mode (Learning with Hints)' : 'Test Mode (Timed Diagnostic Assessment)'}
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Conceptual Knowledge Evaluation
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 font-medium">
+              Verify actual understanding before practical C++ coding. Practice mode offers unlimited hints; Test mode provides timed independent scoring.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Conceptual Knowledge Evaluation
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 font-medium">
-            Verify actual understanding before practical C++ coding. Practice mode offers unlimited hints; Test mode provides timed independent scoring.
-          </p>
         </div>
 
         {/* Dual Mode Toggle Pill */}
